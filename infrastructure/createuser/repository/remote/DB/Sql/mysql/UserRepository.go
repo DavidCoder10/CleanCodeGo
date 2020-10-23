@@ -1,8 +1,8 @@
 package mysql
 
 import (
-	"CleanCodeGo/user/domain/entity"
-	"CleanCodeGo/user/domain/port"
+	"CleanCodeGo/entities/user"
+	"CleanCodeGo/usecases/createuser/gateway"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/jinzhu/gorm"
@@ -12,7 +12,7 @@ type UserRepository struct {
 	db *gorm.DB
 }
 
-func NewUserRepository(database *gorm.DB) port.UserRepository {
+func NewUserRepository(database *gorm.DB) gateway.Gateway {
 
 	connection := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
@@ -25,21 +25,20 @@ func NewUserRepository(database *gorm.DB) port.UserRepository {
 
 	database, err := gorm.Open("mysql", connection)
 
-	if (err != nil) {
+	if err != nil {
 		panic(fmt.Sprint("Connection refused! %s", err))
 	}
 	fmt.Print("Connection success")
 	return &UserRepository{db: database}
 }
 
-func (userRepository *UserRepository) FindByEmail(email string) (entity.User, error) {
-	user := entity.User{}
-	err := userRepository.db.Where(&entity.User{Email: email}).First(&user).Error
+func (userRepository *UserRepository) FindByEmail(email string) (user.User, error) {
+	user := user.User{Email: email}
+	err := userRepository.db.Where(&user).First(&user).Error
 	return user, err
 }
 
-func (userRepository *UserRepository) Create(user entity.User) (entity.User, error) {
+func (userRepository *UserRepository) Create(user user.User) (user.User, error) {
 	err := userRepository.db.Create(user).Error
 	return user, err
 }
-

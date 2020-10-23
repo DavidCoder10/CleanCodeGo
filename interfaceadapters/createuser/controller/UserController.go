@@ -1,23 +1,23 @@
 package controller
 
 import (
-	"CleanCodeGo/user/adapter/controller/request"
-	"CleanCodeGo/user/usecase/port"
-	userRequestUseCase "CleanCodeGo/user/usecase/request"
+	"CleanCodeGo/interfaceadapters/createuser/controller/request"
+	"CleanCodeGo/usecases/createuser"
+	userRequestUseCase "CleanCodeGo/usecases/createuser/request"
 )
 
 type UserController struct {
-	useCaseUser port.ICreateUser
+	useCaseUser createuser.Interactor
 }
 
-func NewUserController(useCaseUser port.ICreateUser) *UserController {
+func NewUserController(useCaseUser createuser.Interactor) *UserController {
 	return &UserController{useCaseUser: useCaseUser}
 }
 
 func (userController *UserController) CreateUser(request request.UserRequest) (string, error) {
 	userRequestUseCase := userRequestUseCase.UserRequest{
-		Name: request.Name,
-		Email: request.Email,
+		Name:     request.Name,
+		Email:    request.Email,
 		Password: request.Password,
 	}
 	_, err := userController.useCaseUser.Create(userRequestUseCase)
