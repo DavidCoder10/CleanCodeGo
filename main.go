@@ -1,23 +1,27 @@
 package main
 
 import (
-	"CleanCode/infraestructura/db"
-	"CleanCode/user/repository"
-	"CleanCode/user/services"
+	"CleanCodeGo/user/adapter/Repository/DB/Sql/mysql"
+	"CleanCodeGo/user/adapter/controller"
+	"CleanCodeGo/user/adapter/controller/request"
+	"CleanCodeGo/user/usecase"
 	"fmt"
-
-	"github.com/fatih/color"
+	"github.com/jinzhu/gorm"
 )
 
 func main() {
-	db := db.NewDB()
-	r := repository.NewRUserRepo(db)
-	s := services.NewSUserService(r)
-	user, err := s.ValidateUserOfLegalAge(0)
+
+	repo := mysql.NewUserRepository(&gorm.DB{})
+	useCase := usecase.NewCreateUser(repo)
+	controller := controller.NewUserController(useCase)
+
+	request := request.UserRequest{Name: "David", Email: "David@", Password: "123"}
+
+	response, err := controller.CreateUser(request)
 
 	if err != nil {
-		panic(color.RedString(err.Error()))
+		panic(err)
 	}
 
-	fmt.Printf(color.HiGreenString(user))
+	fmt.Sprint(response)
 }
