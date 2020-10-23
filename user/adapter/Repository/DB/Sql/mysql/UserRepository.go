@@ -20,7 +20,7 @@ func NewUserRepository(database *gorm.DB) port.UserRepository {
 		"dbroot",
 		"127.0.0.1",
 		"3307",
-		"moop",
+		"users",
 	)
 
 	database, err := gorm.Open("mysql", connection)
